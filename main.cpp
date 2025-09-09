@@ -5,8 +5,10 @@
 #include <vector>
 
 #include "mockUserInterface.hpp"
+#include "mockVaultInterface.hpp"
 
 MockUserInterface userInterface;
+MockVaultInterface vault;
 
 void userMenu(User loggedInUser);
 
@@ -63,49 +65,47 @@ int main(int argc, char** argv)
         {
             switch (std::atoi(input.c_str()))
             {
-            case 1:
-            {
-                bool loggedIn {false};
-                int tries{};
-                std::string username{};
-                std::string password{};
-                User loggedInUser{};
-
-                do
+                case 1:
                 {
-                    std::cout << "Username: ";
-                    std::cin >> username;
-                    std::cout << "Password: ";
-                    password = hiddenCin();
-                    std::cout << std::endl;
+                    bool loggedIn {false};
+                    int tries{};
+                    std::string username{};
+                    std::string password{};
+                    User loggedInUser{};
 
-                    loggedInUser = userInterface.getUser(username);
-                    if (loggedInUser.username == username && loggedInUser.password == password)
+                    do
                     {
-                        loggedIn = true;
-                    }
-                    else
-                    {
-                        std::cout << "Wrong password. Try again." << std::endl;
-                        tries++;
-                    }
-                } while (loggedIn == false && tries < 3);
+                        std::cout << "Username: ";
+                        std::cin >> username;
+                        std::cout << "Password: ";
+                        password = hiddenCin();
+                        std::cout << std::endl;
 
-                if (loggedIn)
-                    userMenu(loggedInUser);
-                if (tries == 3)
-                {
-                    std::cout << "3 incorrect login attempts" << std::endl;
+                        loggedInUser = userInterface.getUser(username);
+                        if (loggedInUser.username == username && loggedInUser.password == password)
+                        {
+                            userMenu(loggedInUser);
+                        }
+                        else
+                        {
+                            std::cout << "Wrong password. Try again." << std::endl;
+                            tries++;
+                        }
+                    } while (tries < 3);
+
+                    if (tries == 3)
+                    {
+                        std::cout << "3 incorrect login attempts" << std::endl;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 2:
-                createUser();
-                break;
-            case 3:
-            default:
-                exit = true;
-                break;
+                case 2:
+                    createUser();
+                    break;
+                case 3:
+                default:
+                    exit = true;
+                    break;
             }
         }
     }
@@ -115,5 +115,64 @@ int main(int argc, char** argv)
 
 void userMenu(User loginedUser)
 {
-    std::cout << "Successfully logged in!" << std::endl;
+    std::string input{};
+    bool loggedIn = true;
+    while (loggedIn)
+    {
+        std::cout << "Select action: \n"
+        "1. Get a password\n"
+        "2. Create new password\n"
+        "3. Delete a password\n"
+        "4. Log out\n";
+
+        std::cin >> input;
+
+        if (input.size() == 1 && std::isdigit(input.at(0)))
+        {
+            switch (std::atoi(input.c_str()))
+            {
+                case 1:
+                {
+                    std::cout << "Name of entry: ";
+                    std::cin >> input;
+                    std::pair<std::string, std::string> entry = vault.getPassword(input);
+
+                    std::cout << "Username: " << entry.first << std::endl;
+                    std::cout << "Password: " << entry.second << std::endl;
+                    break;
+                }
+                case 2:
+                {
+                    std::string entryName{};
+                    std::string username{};
+                    std::string password{};
+
+                    std::cout << "Name of entry: ";
+                    std::cin >> entryName;
+                    std::cout << "Username in entry: ";
+                    std::cin >> username;
+                    std::cout << "Password in entry: ";
+                    password = hiddenCin();
+
+                    vault.addPassword(entryName, password, username);
+                    std::cout << std::endl;
+                    break;
+                }
+                case 3:
+                {
+                    std::cout << "Name of entry to delete: ";
+                    std::cin >> input;
+                    // std::pair<std::string, std::string> entry = vault.getPassword(input);
+                    vault.deletePassword(input);
+                    break;
+                }
+                case 4:
+                default:
+                    loggedIn = false;
+                    break;
+            }
+        }
+
+    }
+    
 }
