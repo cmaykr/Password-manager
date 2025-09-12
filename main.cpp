@@ -6,6 +6,7 @@
 
 #include "mockUserInterface.hpp"
 #include "mockVaultInterface.hpp"
+#include "sqliteVault.hpp"
 
 MockUserInterface userInterface;
 MockVaultInterface vault;
@@ -50,6 +51,8 @@ int main(int argc, char** argv)
     userInterface = MockUserInterface();
     std::string input{};
     bool exit {false};
+
+    sqliteVault sqlite{"test.db"};
 
     while (exit == false)
     {
