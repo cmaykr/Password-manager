@@ -9,7 +9,7 @@
 #include "sqliteVault.hpp"
 
 MockUserInterface userInterface;
-MockVaultInterface vault;
+sqliteVault vault{"test.db"};
 
 void userMenu(User loggedInUser);
 
@@ -52,8 +52,6 @@ int main(int argc, char** argv)
     std::string input{};
     bool exit {false};
 
-    sqliteVault sqlite{"test.db"};
-
     while (exit == false)
     {
         std::cout << "Select action: \n"
@@ -88,6 +86,7 @@ int main(int argc, char** argv)
                         if (loggedInUser.username == username && loggedInUser.password == password)
                         {
                             userMenu(loggedInUser);
+                            break;
                         }
                         else
                         {
@@ -138,10 +137,10 @@ void userMenu(User loginedUser)
                 {
                     std::cout << "Name of entry: ";
                     std::cin >> input;
-                    std::pair<std::string, std::string> entry = vault.getPassword(input);
+                    Entry entry = vault.getEntry(Entry{input});
 
-                    std::cout << "Username: " << entry.first << std::endl;
-                    std::cout << "Password: " << entry.second << std::endl;
+                    std::cout << "Username: " << entry.username << std::endl;
+                    std::cout << "Password: " << entry.password << std::endl;
                     break;
                 }
                 case 2:
@@ -157,7 +156,8 @@ void userMenu(User loginedUser)
                     std::cout << "Password in entry: ";
                     password = hiddenCin();
 
-                    vault.addPassword(entryName, password, username);
+                    Entry newEntry{entryName, username, password};
+                    vault.addEntry(newEntry);
                     std::cout << std::endl;
                     break;
                 }
@@ -165,8 +165,8 @@ void userMenu(User loginedUser)
                 {
                     std::cout << "Name of entry to delete: ";
                     std::cin >> input;
-                    // std::pair<std::string, std::string> entry = vault.getPassword(input);
-                    vault.deletePassword(input);
+                    // std::pair<std::string, std::string> entry = vault.getEntry(input);
+                    vault.deleteEntry(Entry{input});
                     break;
                 }
                 case 4:

@@ -7,13 +7,13 @@ public:
     sqliteVault(std::string const& databaseFilename);
     ~sqliteVault();
 
-    void addPassword(std::string const& entryName, std::string const& password, std::string const& username);
+    void addEntry(Entry newEntry) override;
 
-    std::pair<std::string, std::string> getPassword(std::string const& entryName);
+    Entry getEntry(Entry entry) override;
 
-    void updatePassword(std::string const& entryName, std::string const& password, std::string const& username);
+    void updateEntry(Entry entry) override;
 
-    void deletePassword(std::string const& entryName);
+    void deleteEntry(Entry entry) override;
 
 private:
     sqlite3 *db;

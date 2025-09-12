@@ -33,24 +33,50 @@ sqliteVault::~sqliteVault()
     while (sqlite3_close(db) == SQLITE_BUSY);
 }
     
-void sqliteVault::addPassword(std::string const& entryName, std::string const& password, std::string const& username)
+void sqliteVault::addEntry(Entry newEntry)
 {
-    std::string sqlCommand {""};
+    std::string sqlCommand {"INSERT INTO vault (entryName, username, password) VALUES"
+        "(?, ?, ?)"
+    };
+
+    sqlite3_stmt *statement{};
+    int rc = sqlite3_prepare_v2(db, sqlCommand.c_str(), sqlCommand.length(), &statement, nullptr);
+    if (rc)
+    {
+        std::cout << "Error 0!" << std::endl;
+    }
+    if (sqlite3_bind_text(statement, 1, newEntry.entryName.c_str(), newEntry.entryName.length(), SQLITE_STATIC))
+    {
+        std::cout << "Error 1!" << std::endl;
+    }
+    if (sqlite3_bind_text(statement, 2, newEntry.username.c_str(), newEntry.username.length(), SQLITE_STATIC))
+    {
+        std::cout << "Error 2!" << std::endl;
+    }
+    if (sqlite3_bind_text(statement, 3, newEntry.password.c_str(), newEntry.password.length(), SQLITE_STATIC))
+    {
+        std::cout << "Error 3!" << std::endl;
+    }
+
+    sqlite3_step(statement);
+    sqlite3_reset(statement);
+    sqlite3_finalize(statement);
     char *zErrMsg = 0;
     sqlite3_exec(db, sqlCommand.c_str(), callback, 0, &zErrMsg);
 }
 
-std::pair<std::string, std::string> sqliteVault::getPassword(std::string const& entryName)
+Entry sqliteVault::getEntry(Entry entry)
 {
-
+    std::cerr << "Error: Function not implemented!" << std::endl;
+    return Entry{};
 }
 
-void sqliteVault::updatePassword(std::string const& entryName, std::string const& password, std::string const& username)
+void sqliteVault::updateEntry(Entry entry)
 {
-
+    std::cerr << "Error: Function not implemented!" << std::endl;
 }
 
-void sqliteVault::deletePassword(std::string const& entryName)
+void sqliteVault::deleteEntry(Entry entry)
 {
-
+    std::cerr << "Error: Function not implemented!" << std::endl;
 }

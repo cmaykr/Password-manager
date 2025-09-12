@@ -10,26 +10,26 @@ public:
         : vault{}
     {}
 
-    void addPassword(std::string const& entryName, std::string const& password, std::string const& username) override
+    void addEntry(Entry newEntry) override
     {
-        vault[entryName] = std::make_pair(username, password);
+        vault[newEntry.entryName] = newEntry;
     }
 
-    std::pair<std::string, std::string> getPassword(std::string const& entryName) override
+    Entry getEntry(Entry entry) override
     {
-        return vault[entryName];
+        return vault[entry.entryName];
     }
 
-    void updatePassword(std::string const& entryName, std::string const& password, std::string const& username) override
+    void updateEntry(Entry entry) override
     {
-        vault[entryName] = std::make_pair(username, password);
+        vault[entry.entryName] = entry;
     }
 
-    void deletePassword(std::string const& entryName) override
+    void deleteEntry(Entry entry) override
     {
-        vault.erase(entryName);
+        vault.erase(entry.entryName);
     }
 
 private:
-    std::map<std::string, std::pair<std::string, std::string>> vault;
+    std::map<std::string, Entry> vault;
 };

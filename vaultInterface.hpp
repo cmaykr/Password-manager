@@ -4,14 +4,21 @@
 #include <iostream>
 #include <utility>
 
+
+struct Entry {
+    std::string entryName;
+    std::string username;
+    std::string password;
+};
+
 class VaultInterface 
 {
 public:
-    virtual void addPassword(std::string const& entryName, std::string const& password, std::string const& username) = 0;
+    virtual void addEntry(Entry newEntry) = 0;
 
-    virtual std::pair<std::string, std::string> getPassword(std::string const& entryName) = 0;
+    virtual Entry getEntry(Entry entry) = 0;
 
-    virtual void updatePassword(std::string const& entryName, std::string const& password, std::string const& username) = 0;
+    virtual void updateEntry(Entry entry) = 0;
 
-    virtual void deletePassword(std::string const& entryName) = 0;
+    virtual void deleteEntry(Entry entry) = 0;
 };
