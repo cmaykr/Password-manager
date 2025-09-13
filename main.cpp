@@ -122,10 +122,11 @@ void userMenu(User loginedUser)
     while (loggedIn)
     {
         std::cout << "Select action: \n"
-        "1. Get a password\n"
-        "2. Create new password\n"
-        "3. Delete a password\n"
-        "4. Log out\n";
+        "1. Get a entry\n"
+        "2. Create new entry\n"
+        "3. Update existing entry\n"
+        "4. Delete a entry\n"
+        "5. Log out\n";
 
         std::cin >> input;
 
@@ -163,13 +164,39 @@ void userMenu(User loginedUser)
                 }
                 case 3:
                 {
+                    std::string entryName{};
+                    std::string username{};
+                    std::string password{};
+
+                    std::cout << "Name of entry to update: ";
+                    std::cin >> entryName;
+                    Entry updateEntry{vault.getEntry(Entry{entryName, "", ""})};
+                    if (!updateEntry.entryName.empty())
+                    {
+                        std::cout << "New username: ";
+                        std::cin >> username;
+                        std::cout << "New password: ";
+                        password = hiddenCin();
+                        
+                        updateEntry.username = username;
+                        updateEntry.password = password;
+                        vault.updateEntry(updateEntry);
+                    }
+                    else
+                    {
+                        std::cout << "Entry does not exist." << std::endl;
+                    }
+                    break;
+                }
+                case 4:
+                {
                     std::cout << "Name of entry to delete: ";
                     std::cin >> input;
                     // std::pair<std::string, std::string> entry = vault.getEntry(input);
                     vault.deleteEntry(Entry{input});
                     break;
                 }
-                case 4:
+                case 5:
                 default:
                     loggedIn = false;
                     break;
