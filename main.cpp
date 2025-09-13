@@ -204,5 +204,4 @@ void userMenu(User loginedUser)
         }
 
     }
-    
 }

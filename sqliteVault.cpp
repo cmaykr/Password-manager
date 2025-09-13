@@ -13,7 +13,7 @@ sqliteVault::sqliteVault(std::string const& databaseFilename)
 {
     int rc = sqlite3_open(databaseFilename.c_str(), &db);
 
-    std::string sqlCommand {"CREATE TABLE vault ("
+    std::string sqlCommand {"CREATE TABLE IF NOT EXISTS vault ("
         "entryName varchar(255),"
         "username varchar(255),"
         "password varchar(255)"
@@ -24,12 +24,13 @@ sqliteVault::sqliteVault(std::string const& databaseFilename)
     std::cout << rc << std::endl;
     if (rc)
     {
-        std::cout << "Error!" << std::endl;
+        std::cout << "Error!" << zErrMsg << std::endl;
     }
 }
 
 sqliteVault::~sqliteVault()
 {
+    sqlite3_close(db);
     while (sqlite3_close(db) == SQLITE_BUSY);
 }
     
