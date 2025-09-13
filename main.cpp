@@ -4,8 +4,7 @@
 #include <unistd.h>
 #include <vector>
 
-#include "mockUserInterface.hpp"
-#include "mockVaultInterface.hpp"
+#include "mockUser.hpp"
 #include "sqliteVault.hpp"
 
 MockUserInterface userInterface;
@@ -59,59 +58,57 @@ int main(int argc, char** argv)
         "2. Create new user and vault\n"
         "3. Exit program\n";
 
+        int intInput{};
         std::cout << "Choice: ";
-        std::cin >> input;
+        std::cin >> intInput;
+        std::cout << exit << std::endl;
 
-        if (input.size() == 1 && std::isdigit(input.at(0)))
+        switch (intInput)
         {
-            switch (std::atoi(input.c_str()))
+            case 1:
             {
-                case 1:
+                bool loggedIn {false};
+                int tries{};
+                std::string username{};
+                std::string password{};
+                User loggedInUser{};
+
+                do
                 {
-                    bool loggedIn {false};
-                    int tries{};
-                    std::string username{};
-                    std::string password{};
-                    User loggedInUser{};
+                    std::cout << "Username: ";
+                    std::cin >> username;
+                    std::cout << "Password: ";
+                    password = hiddenCin();
+                    std::cout << std::endl;
 
-                    do
+                    loggedInUser = userInterface.getUser(username);
+                    if (loggedInUser.username == username && loggedInUser.password == password)
                     {
-                        std::cout << "Username: ";
-                        std::cin >> username;
-                        std::cout << "Password: ";
-                        password = hiddenCin();
-                        std::cout << std::endl;
-
-                        loggedInUser = userInterface.getUser(username);
-                        if (loggedInUser.username == username && loggedInUser.password == password)
-                        {
-                            userMenu(loggedInUser);
-                            break;
-                        }
-                        else
-                        {
-                            std::cout << "Wrong password. Try again." << std::endl;
-                            tries++;
-                        }
-                    } while (tries < 3);
-
-                    if (tries == 3)
-                    {
-                        std::cout << "3 incorrect login attempts" << std::endl;
+                        userMenu(loggedInUser);
+                        break;
                     }
-                    break;
+                    else
+                    {
+                        std::cout << "Wrong password. Try again." << std::endl;
+                        tries++;
+                    }
+                } while (tries < 3);
+
+                if (tries == 3)
+                {
+                    std::cout << "3 incorrect login attempts" << std::endl;
                 }
-                case 2:
-                    createUser();
-                    break;
-                case 3:
-                default:
-                    exit = true;
-                    break;
+                break;
             }
+            case 2:
+                createUser();
+                break;
+            case 3:
+            default:
+                exit = true;
+                break;
         }
     }
-
     return 0;
 }
 

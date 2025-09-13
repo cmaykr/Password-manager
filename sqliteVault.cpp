@@ -81,6 +81,8 @@ Entry sqliteVault::getEntry(Entry entry)
         gotEntry.username = reinterpret_cast<const char*>(sqlite3_column_text(statement, 1)); 
         gotEntry.password = reinterpret_cast<const char*>(sqlite3_column_text(statement, 2)); // This should not cause any troubles as only printable characters will be used.
     }
+    sqlite3_reset(statement);
+    sqlite3_finalize(statement);
     return gotEntry;
 }
 

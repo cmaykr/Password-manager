@@ -1,4 +1,4 @@
-#include "vaultInterface.hpp"
+#include "Ivault.hpp"
 #include <sqlite3.h>
 
 class sqliteVault : public VaultInterface
