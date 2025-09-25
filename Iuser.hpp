@@ -6,6 +6,7 @@
 struct User {
     std::string username;
     std::string password;
+    std::string vaultFileName;
 };
 
 class UserInterface 
@@ -13,9 +14,9 @@ class UserInterface
 public:
     virtual void addUser(User const& user) = 0;
 
-    virtual User getUser(std::string const& username) = 0;
+    virtual User getUser(User const& user) = 0;
 
-    virtual void updateUser(std::string currentUsername, User newUserInfo) = 0;
+    virtual void updateUser(User const& currentUser, User const& newUserInfo) = 0;
 
     virtual void deleteUser(User user) = 0;
 };

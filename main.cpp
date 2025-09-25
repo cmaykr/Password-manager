@@ -6,9 +6,9 @@
 
 #include "mockUser.hpp"
 #include "sqliteVault.hpp"
+#include "sqliteUser.hpp"
 
-MockUserInterface userInterface;
-sqliteVault vault{"test.db"};
+sqliteUser userDB{"users.db"};
 
 void userMenu(User loggedInUser);
 
@@ -40,14 +40,14 @@ void createUser()
     std::cout << "Password: ";
     password = hiddenCin();
 
-    User user {username, password};
+    User user {username, password, user.username + "Vault.db"};
 
-    userInterface.addUser(user);
+    sqliteVault userVault{user.vaultFileName};
+    userDB.addUser(user);
 }
 
 int main(int argc, char** argv)
 {
-    userInterface = MockUserInterface();
     std::string input{};
     bool exit {false};
 
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
                     password = hiddenCin();
                     std::cout << std::endl;
 
-                    loggedInUser = userInterface.getUser(username);
+                    loggedInUser = userDB.getUser(User{username});
                     if (loggedInUser.username == username && loggedInUser.password == password)
                     {
                         userMenu(loggedInUser);
@@ -112,9 +112,11 @@ int main(int argc, char** argv)
     return 0;
 }
 
-void userMenu(User loginedUser)
+void userMenu(User loggedInUser)
 {
     std::string input{};
+    sqliteVault userVault{loggedInUser.vaultFileName};
+
     bool loggedIn = true;
     while (loggedIn)
     {
@@ -135,7 +137,7 @@ void userMenu(User loginedUser)
                 {
                     std::cout << "Name of entry: ";
                     std::cin >> input;
-                    Entry entry = vault.getEntry(Entry{input});
+                    Entry entry = userVault.getEntry(Entry{input});
 
                     std::cout << "Username: " << entry.username << std::endl;
                     std::cout << "Password: " << entry.password << std::endl;
@@ -155,7 +157,7 @@ void userMenu(User loginedUser)
                     password = hiddenCin();
 
                     Entry newEntry{entryName, username, password};
-                    vault.addEntry(newEntry);
+                    userVault.addEntry(newEntry);
                     std::cout << std::endl;
                     break;
                 }
@@ -167,7 +169,7 @@ void userMenu(User loginedUser)
 
                     std::cout << "Name of entry to update: ";
                     std::cin >> entryName;
-                    Entry updateEntry{vault.getEntry(Entry{entryName, "", ""})};
+                    Entry updateEntry{userVault.getEntry(Entry{entryName, "", ""})};
                     if (!updateEntry.entryName.empty())
                     {
                         std::cout << "New username: ";
@@ -177,7 +179,7 @@ void userMenu(User loginedUser)
                         
                         updateEntry.username = username;
                         updateEntry.password = password;
-                        vault.updateEntry(updateEntry);
+                        userVault.updateEntry(updateEntry);
                     }
                     else
                     {
@@ -190,7 +192,7 @@ void userMenu(User loginedUser)
                     std::cout << "Name of entry to delete: ";
                     std::cin >> input;
                     // std::pair<std::string, std::string> entry = vault.getEntry(input);
-                    vault.deleteEntry(Entry{input});
+                    userVault.deleteEntry(Entry{input});
                     break;
                 }
                 case 5:

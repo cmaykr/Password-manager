@@ -14,7 +14,7 @@ sqliteVault::sqliteVault(std::string const& databaseFilename)
     int rc = sqlite3_open(databaseFilename.c_str(), &db);
 
     std::string sqlCommand {"CREATE TABLE IF NOT EXISTS vault ("
-        "entryName varchar(255),"
+        "entryName varchar(255) PRIMARY KEY NOT NULL,"
         "username varchar(255),"
         "password varchar(255)"
         ")"};
@@ -30,6 +30,7 @@ sqliteVault::sqliteVault(std::string const& databaseFilename)
 
 sqliteVault::~sqliteVault()
 {
+    // TODO: Should wait for all transactions to finish, or wait a specific amount of time
     sqlite3_close(db);
     while (sqlite3_close(db) == SQLITE_BUSY);
 }

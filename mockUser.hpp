@@ -15,20 +15,20 @@ public:
         mockdb[user.username] = user;
     }
 
-    User getUser(std::string const& username) override
+    User getUser(User const& user) override
     {
-        User user = mockdb[username];
+        User gottenUser = mockdb[user.username];
 
-        return user;
+        return gottenUser;
     }
 
-    void updateUser(std::string currentUsername, User newUserInfo) override
+    void updateUser(User const& currentUser, User const& newUserInfo) override
     {
-        User user = mockdb[currentUsername];
+        User user = mockdb[currentUser.username];
 
         user.password = newUserInfo.password;
 
-        mockdb[currentUsername] = user;
+        mockdb[currentUser.username] = user;
     }
 
     void deleteUser(User user) override
